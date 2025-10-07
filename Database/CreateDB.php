@@ -1,5 +1,7 @@
 <?php
+
 namespace Database;
+
 require_once(realpath(__DIR__) . "/Database.php");
 
 class CreateDB extends Database
@@ -94,8 +96,7 @@ class CreateDB extends Database
         foreach ($this->createTableQueries as $createTableQueries) {
             $this->createTable($createTableQueries);
         }
-        foreach ($this->tableInitializes as $tableInitializes)
-        {
+        foreach ($this->tableInitializes as $tableInitializes) {
             $this->insert($tableInitializes['table'], $tableInitializes['fields'], $tableInitializes['values']);
         }
     }

@@ -1,9 +1,12 @@
 <?php
+
 namespace Database;
+
 use PDO;
 use PDOException;
 
-class Database {
+class Database
+{
     private string $host;
     private string $dbName;
     private string $username;
@@ -22,7 +25,8 @@ class Database {
         $this->password = $password;
     }
 
-    public function connect(): ?PDO {
+    public function connect(): ?PDO
+    {
         if ($this->conn !== null) {
             return $this->conn;
         }
@@ -40,13 +44,15 @@ class Database {
         return $this->conn;
     }
 
-    private function ensureConnection(): void {
+    private function ensureConnection(): void
+    {
         if ($this->conn === null) {
             $this->connect();
         }
     }
 
-    public function select(string $sql, ?array $values = null): ?array {
+    public function select(string $sql, ?array $values = null): ?array
+    {
         $this->ensureConnection();
 
         try {
@@ -63,24 +69,21 @@ class Database {
         }
     }
 
-    public function insert(string $tableName, array $fields, array $values): bool {
+    public function insert(string $tableName, array $fields, array $rows): bool
+    {
         $this->ensureConnection();
 
-        if (count($fields) !== count($values)) {
-            error_log("Insert failed: fields and values count mismatch.");
-            return false;
-        }
-
         try {
-            $placeholders = array_map(static fn($field) => ':' . $field, $fields);
+            $placeholders = array_map(static fn ($field) => ':' . $field, $fields);
             $sql = "INSERT INTO $tableName (" . implode(',', $fields) . ") VALUES (" . implode(',', $placeholders) . ")";
             $stmt = $this->conn->prepare($sql);
-            $data = [];
-            foreach ($fields as $index => $field) {
-                $data[':' . $field] = $values[$index];
+
+            foreach ($rows as $row) {
+                $data = array_combine($placeholders, $row);
+                $stmt->execute($data);
             }
 
-            return $stmt->execute($data);
+            return true;
         } catch (PDOException $e) {
             error_log("Insert query failed: " . $e->getMessage());
             return false;
@@ -88,7 +91,9 @@ class Database {
     }
 
 
-    public function execute(string $sql, array $values = []): bool {
+
+    public function execute(string $sql, array $values = []): bool
+    {
         $this->ensureConnection();
 
         try {
@@ -99,7 +104,8 @@ class Database {
         }
     }
 
-    public function createTable(string $sql): bool {
+    public function createTable(string $sql): bool
+    {
         $this->ensureConnection();
 
         try {
@@ -111,7 +117,8 @@ class Database {
         }
     }
 
-    public function disconnect(): void {
+    public function disconnect(): void
+    {
         $this->conn = null;
     }
 }
