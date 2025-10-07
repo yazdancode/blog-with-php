@@ -5,7 +5,7 @@ require_once(realpath(__DIR__) . "/Database.php");
 class CreateDB extends Database
 {
     private array $createTableQueries = array(
-        "CREATE TABLE `categories` (
+        "CREATE TABLE IF NOT EXISTS `categories` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `name` varchar(200) COLLATE utf8_persian_ci NOT NULL,
             `created_at` datetime NOT NULL,
@@ -13,7 +13,7 @@ class CreateDB extends Database
             PRIMARY KEY (`id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_persian_ci",
 
-        "CREATE TABLE `users` (
+        "CREATE TABLE IF NOT EXISTS `users` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `username` varchar(100) COLLATE utf8_persian_ci NOT NULL,
             `email` varchar(150) COLLATE utf8_persian_ci NOT NULL,
@@ -21,11 +21,11 @@ class CreateDB extends Database
             `permission` enum('user', 'admin') NOT NULL DEFAULT 'user',
             `created_at` datetime NOT NULL,
             `updated_at` datetime DEFAULT NULL,
-            PRIMARY KEY (`id`)
-            UNIQUE KEY 'email' ('email')
+            PRIMARY KEY (`id`),
+            UNIQUE KEY `email` (`email`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_persian_ci",
 
-        "CREATE TABLE `articles` (
+        "CREATE TABLE IF NOT EXISTS `articles` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `title` varchar(255) COLLATE utf8_persian_ci NOT NULL,
             `summary` text COLLATE utf8_persian_ci,
@@ -42,7 +42,7 @@ class CreateDB extends Database
             FOREIGN KEY (`cat_id`) REFERENCES `categories`(`id`) ON DELETE CASCADE
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_persian_ci",
 
-        "CREATE TABLE `comments` (
+        "CREATE TABLE IF NOT EXISTS `comments` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `user_id` int(11) NOT NULL,
             `article_id` int(11) NOT NULL,
@@ -55,7 +55,7 @@ class CreateDB extends Database
             FOREIGN KEY (`article_id`) REFERENCES `articles`(`id`) ON DELETE CASCADE
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_persian_ci",
 
-        "CREATE TABLE `websetting` (
+        "CREATE TABLE IF NOT EXISTS `websetting` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `title` varchar(255) COLLATE utf8_persian_ci NOT NULL,
             `description` text COLLATE utf8_persian_ci,
@@ -67,7 +67,7 @@ class CreateDB extends Database
             PRIMARY KEY (`id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_persian_ci",
 
-        "CREATE TABLE `menus` (
+        "CREATE TABLE IF NOT EXISTS `menus` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `name` varchar(255) COLLATE utf8_persian_ci NOT NULL,
             `url` varchar(255) COLLATE utf8_persian_ci NOT NULL,
@@ -79,11 +79,26 @@ class CreateDB extends Database
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_persian_ci"
     );
 
-    public function initializeDatabase(): void
+    private array $tableInitializes = array(
+        [
+            'table' => 'users',
+            'fields' => ['username', 'email', 'password', 'permission'],
+            'values' => [
+                ['admin', 'admin@gmail.com', '12345678', 'admin']
+            ]
+        ]
+    );
+
+    public function run(): void
     {
-        $this->connect();
-        foreach ($this->createTableQueries as $query) {
-            $this->createTable($query);
+        foreach ($this->createTableQueries as $createTableQueries) {
+            $this->createTable($createTableQueries);
+        }
+        foreach ($this->tableInitializes as $tableInitializes)
+        {
+            $this->insert($tableInitializes['table'], $tableInitializes['fields'], $tableInitializes['values']);
         }
     }
+
+
 }

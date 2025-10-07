@@ -40,11 +40,67 @@ class Database {
         return $this->conn;
     }
 
-    public function createTable(string $sql): ?bool
-    {
+    private function ensureConnection(): void {
         if ($this->conn === null) {
             $this->connect();
         }
+    }
+
+    public function select(string $sql, ?array $values = null): ?array {
+        $this->ensureConnection();
+
+        try {
+            if ($values === null) {
+                $stmt = $this->conn->query($sql);
+            } else {
+                $stmt = $this->conn->prepare($sql);
+                $stmt->execute($values);
+            }
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log("Select query failed: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    public function insert(string $tableName, array $fields, array $values): bool {
+        $this->ensureConnection();
+
+        if (count($fields) !== count($values)) {
+            error_log("Insert failed: fields and values count mismatch.");
+            return false;
+        }
+
+        try {
+            $placeholders = array_map(static fn($field) => ':' . $field, $fields);
+            $sql = "INSERT INTO $tableName (" . implode(',', $fields) . ") VALUES (" . implode(',', $placeholders) . ")";
+            $stmt = $this->conn->prepare($sql);
+            $data = [];
+            foreach ($fields as $index => $field) {
+                $data[':' . $field] = $values[$index];
+            }
+
+            return $stmt->execute($data);
+        } catch (PDOException $e) {
+            error_log("Insert query failed: " . $e->getMessage());
+            return false;
+        }
+    }
+
+
+    public function execute(string $sql, array $values = []): bool {
+        $this->ensureConnection();
+
+        try {
+            return $this->conn->prepare($sql)->execute($values);
+        } catch (PDOException $e) {
+            error_log("Execute query failed: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function createTable(string $sql): bool {
+        $this->ensureConnection();
 
         try {
             $this->conn->exec($sql);
@@ -55,4 +111,7 @@ class Database {
         }
     }
 
+    public function disconnect(): void {
+        $this->conn = null;
+    }
 }
