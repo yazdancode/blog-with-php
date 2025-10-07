@@ -90,6 +90,33 @@ class Database
         }
     }
 
+    public function update(string $tableName, $id, array $fields, $values): void
+    {
+        $this->ensureConnection();
+        try {
+            $setClause = implode(', ', array_map(static fn($field) => "$field = ?", $fields));
+            $sql = "UPDATE $tableName SET $setClause WHERE id = ?";
+            $stmt = $this->conn->prepare($sql);
+            $values[] = $id;
+            $stmt->execute($values);
+        } catch (PDOException $e) {
+            error_log("Update query failed: " . $e->getMessage());
+        }
+    }
+
+    public function delete(string  $tableName, $id): void
+    {
+        $this->ensureConnection();
+        try {
+            $sql = "DELETE FROM $tableName WHERE id = :id";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([':id' => $id]);
+        } catch (PDOException $e) {
+            error_log("Delete query failed: " . $e->getMessage());
+        }
+
+    }
+
 
 
     public function execute(string $sql, array $values = []): bool
