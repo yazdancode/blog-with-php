@@ -27,7 +27,6 @@ class Category extends Admin
 
     }
 
-
     public function create():void
     {
         require_once realpath(__FILE__). "/../template/admin/categories/create.php";
@@ -61,5 +60,4 @@ class Category extends Admin
         $db->delete('categories', $id);
         // $this->redirectBack();
     }
-
 }
