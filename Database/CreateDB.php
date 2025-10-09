@@ -88,7 +88,7 @@ class CreateDB extends Database
             'values' => [
                 ['admin', 'admin@gmail.com', '12345678', 'admin']
             ]
-        ]
+            ]
     );
 
     public function run(): void

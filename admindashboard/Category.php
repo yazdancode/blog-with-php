@@ -13,7 +13,7 @@ class Category extends Admin
     public function index(): void
     {
         $db = new Database();
-        $categories = $db->select("SELECT * FROM `categories` ORDER BY `id` DESC;");
+        $categories = $db->select("SELECT * FROM categories ORDER BY id DESC");
         extract(['categories' => $categories]);
         require dirname(__DIR__) . "/template/admin/categories/index.php";
     }
