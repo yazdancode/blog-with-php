@@ -34,11 +34,18 @@ function uri($uriPattern, $className, $methodName, $requestMethod = 'GET')
         } else {
             $object->$methodName($requestData);
         }
+    } else if (!empty($params)) {
+        $object->$methodName(implode(',', $params));
     } else {
-        if (!empty($params)) {
-            $object->$methodName(implode(',', $params));
-        } else {
-            $object->$methodName();
-        }
+        $object->$methodName();
     }
 }
+
+
+uri('category', 'Category','index');
+uri('category/show/{id}', 'Category','show');
+uri('category/create', 'Category','create');
+uri('category/store', 'Category','store');
+uri('category/edit/{id}', 'Category','edit');
+uri('category/update/{id}', 'Category','update', 'POST');
+uri('category/delete/{id}', 'Category','delete');
