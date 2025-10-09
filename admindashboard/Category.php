@@ -39,19 +39,22 @@ class Category extends Admin
         $this->redirect('category');
     }
 
-    public function edit($id):void
+    public function edit($id): void
     {
-        $db = new Database();
-        $result = $db->select("SELECT * FROM `categories` WHERE `id` = ?", [$id]);
-        require_once dirname(__FILE__, 2) . "/template/admin/categories/edit.php";
+    $db = new Database();
+    $category = $db->select("SELECT * FROM categories WHERE id = ?", [$id])[0];
+    extract(['category' => $category]);
+    require dirname(__DIR__) . "/template/admin/categories/edit.php";
     }
 
-    public function update($request, $id):void
+    public function update($request, $id): void
     {
-        $db = new Database();
-        $db->update('categories', $id, array_keys($request), $request);
-        $this->redirect('category');
+    $db = new Database();
+    $db->update('categories', $id, ['name'], [$request['name']]);
+    header("Location: /project/category");
+    exit;
     }
+
 
     public function delete($id):void
     {

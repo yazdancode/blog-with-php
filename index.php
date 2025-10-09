@@ -6,13 +6,13 @@ function uri($uriPattern, $className, $methodName, $requestMethod = 'GET')
 {
     $params = [];
     $patternParts = explode('/', trim($uriPattern, '/'));
-    $requestParts = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
-    if (empty($requestParts[0])) {
-        $requestParts[0] = 'home';
-    }
+    $cleanUri = str_replace('/project/', '', $_SERVER['REQUEST_URI']);
+    $requestParts = explode('/', trim($cleanUri, '/'));
+
     if (count($patternParts) !== count($requestParts) || $_SERVER['REQUEST_METHOD'] !== $requestMethod) {
         return;
     }
+
     foreach ($patternParts as $index => $part) {
         if (preg_match('/^{\w+}$/', $part)) {
             $params[] = $requestParts[$index];
@@ -20,6 +20,7 @@ function uri($uriPattern, $className, $methodName, $requestMethod = 'GET')
             return;
         }
     }
+
     $fullClassName = "AdminDashboard\\$className";
     $object = new $fullClassName();
 
@@ -42,10 +43,10 @@ function uri($uriPattern, $className, $methodName, $requestMethod = 'GET')
 }
 
 
+// مسیرهای دسته‌بندی
 uri('category', 'Category','index');
-uri('category/show/{id}', 'Category','show');
 uri('category/create', 'Category','create');
-uri('category/store', 'Category','store');
+uri('category/store', 'Category','store', 'POST');
 uri('category/edit/{id}', 'Category','edit');
 uri('category/update/{id}', 'Category','update', 'POST');
 uri('category/delete/{id}', 'Category','delete');
