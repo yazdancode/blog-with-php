@@ -31,10 +31,22 @@ class Article extends Admin
     }
 
     public function store($request): void
-    {
-        $db = new Database();
-        
+{
+    $db = new Database();
+    if (!empty($request['cat_id'])) {
+        $savedImagePath = $this->saveImage($request['image'], 'article-image');
+        if ($savedImagePath) {
+            $request['image'] = $savedImagePath;
+            $request['user_id'] = 1;
+            $db->insert('articles', array_keys($request), $request);
+        }
+        else $this->redirectBack();
     }
+    else{
+        $this->redirectBack();
+    }
+}
+
 
     public function edit($id): void
     {
