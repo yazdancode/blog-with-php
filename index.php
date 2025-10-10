@@ -53,7 +53,6 @@ uri('category/delete/{id}', 'Category','delete');
 
 
 // router Article
-
 uri('articles', 'Article','index');
 uri('articles/create', 'Article','create');
 uri('articles/store', 'Article','store', 'POST');
