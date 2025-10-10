@@ -25,15 +25,15 @@ class Article extends Admin
 
     public function create(): void
     {
+        $db = new Database();
+        $categories = $db->select('SELECT * FROM `categories` ORDER BY `id` DESC;');
         require dirname(__DIR__) . "/template/admin/articles/create.php";
     }
 
     public function store($request): void
     {
         $db = new Database();
-        $db->insert('articles', ['title', 'content'], [$request['title'], $request['content']]);
-        header("Location: /project/article");
-        exit;
+        
     }
 
     public function edit($id): void
