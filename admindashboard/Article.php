@@ -1,10 +1,10 @@
 <?php
 namespace Admindashboard;
+
 require_once __DIR__ . '/Admin.php';
 require_once __DIR__ . '/../Database/Database.php';
 
 use Database\Database;
-
 
 class Article extends Admin
 {
@@ -17,31 +17,46 @@ class Article extends Admin
 
     public function show($id): void
     {
-        # code...
+        $db  = new Database();
+        $article = $db->select('SELECT * FROM `articles` WHERE `id` = ?', [$id])[0];
+        extract(['article' => $article]);
+        require dirname(__DIR__) . "/template/admin/articles/show.php";
     }
 
-    public function create()
+    public function create(): void
     {
-
+        require dirname(__DIR__) . "/template/admin/articles/create.php";
     }
 
     public function store($request): void
     {
-        # code...
+        $db = new Database();
+        $db->insert('articles', ['title', 'content'], [$request['title'], $request['content']]);
+        header("Location: /project/article");
+        exit;
     }
 
     public function edit($id): void
     {
-        # code...
+        $db = new Database();
+        $article = $db->select('SELECT * FROM `articles` WHERE `id` = ?', [$id])[0];
+        extract(['article' => $article]);
+        require dirname(__DIR__) . "/template/admin/articles/edit.php";
     }
+
     public function update($request, $id): void
     {
-        # code...
+        $db = new Database();
+        $db->update('articles', $id, ['title', 'content'], [$request['title'], $request['content']]);
+        header("Location: /project/article");
+        exit;
     }
 
     public function delete($id): void
     {
-        # code...
+        $db = new Database();
+        $db->delete('articles', $id);
+        header("Location: /project/article");
+        exit;
     }
-
 }

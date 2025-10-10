@@ -1,4 +1,4 @@
-
+<a href="/project/category/create" class="btn btn-sm btn-success">create</a>
 <?php if (!empty($categories)): ?>
     <?php foreach ($categories as $category): ?>
         <tr>

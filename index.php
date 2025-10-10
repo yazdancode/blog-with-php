@@ -50,3 +50,13 @@ uri('category/store', 'Category','store', 'POST');
 uri('category/edit/{id}', 'Category','edit');
 uri('category/update/{id}', 'Category','update', 'POST');
 uri('category/delete/{id}', 'Category','delete');
+
+
+// router Article
+
+uri('articles', 'Article','index');
+uri('articles/create', 'Article','create');
+uri('articles/store', 'Article','store', 'POST');
+uri('articles/edit/{id}', 'Article','edit');
+uri('articles/update/{id}', 'Article','update', 'POST');
+uri('articles/delete/{id}', 'Article','delete');
