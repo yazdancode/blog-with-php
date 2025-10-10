@@ -8,11 +8,9 @@ function uri($uriPattern, $className, $methodName, $requestMethod = 'GET')
     $patternParts = explode('/', trim($uriPattern, '/'));
     $cleanUri = str_replace('/project/', '', $_SERVER['REQUEST_URI']);
     $requestParts = explode('/', trim($cleanUri, '/'));
-
     if (count($patternParts) !== count($requestParts) || $_SERVER['REQUEST_METHOD'] !== $requestMethod) {
         return;
     }
-
     foreach ($patternParts as $index => $part) {
         if (preg_match('/^{\w+}$/', $part)) {
             $params[] = $requestParts[$index];
@@ -20,7 +18,6 @@ function uri($uriPattern, $className, $methodName, $requestMethod = 'GET')
             return;
         }
     }
-
     $fullClassName = "AdminDashboard\\$className";
     $object = new $fullClassName();
 
@@ -52,7 +49,7 @@ uri('category/update/{id}', 'Category','update', 'POST');
 uri('category/delete/{id}', 'Category','delete');
 
 
-// router Article
+// روتر مقاله
 uri('articles', 'Article','index');
 uri('articles/create', 'Article','create');
 uri('articles/store', 'Article','store', 'POST');

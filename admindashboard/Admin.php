@@ -1,6 +1,8 @@
 <?php
 namespace AdminDashboard;
 
+use RuntimeException;
+
 class Admin
 {
     protected function redirect($url): void
@@ -15,9 +17,9 @@ class Admin
         if (!empty($_SERVER['HTTP_REFERER'])) {
             header("Location: " . $_SERVER['HTTP_REFERER']);
             exit;
-        } else {
-            $this->redirect('dashboard');
         }
+
+        $this->redirect('dashboard');
     }
 
     protected function saveImage($image, $imagePath, $imagename = null)
@@ -38,13 +40,11 @@ class Admin
             $imagename = date('Y-m-d-H-i-s') . '.' . $extension;
         }
         $imagePath = rtrim('public/' . $imagePath, '/') . '/';
-        if (!is_dir($imagePath)) {
-            mkdir($imagePath, 0755, true);
+        if (!is_dir($imagePath) && !mkdir($imagePath, 0755, true) && !is_dir($imagePath)) {
+            throw new RuntimeException(sprintf('Directory "%s" was not created', $imagePath));
         }
-        if (is_uploaded_file($image['tmp_name'])) {
-            if (move_uploaded_file($image['tmp_name'], $imagePath . $imagename)) {
-                return $imagePath . $imagename;
-            }
+        if (is_uploaded_file($image['tmp_name']) && move_uploaded_file($image['tmp_name'], $imagePath . $imagename)) {
+            return $imagePath . $imagename;
         }
 
         return false;
