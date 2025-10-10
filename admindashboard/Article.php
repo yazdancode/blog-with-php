@@ -29,23 +29,27 @@ class Article extends Admin
         $categories = $db->select('SELECT * FROM `categories` ORDER BY `id` DESC;');
         require dirname(__DIR__) . "/template/admin/articles/create.php";
     }
-
     public function store($request): void
-{
+    {
     $db = new Database();
-    if (!empty($request['cat_id'])) {
-        $savedImagePath = $this->saveImage($request['image'], 'article-image');
-        if ($savedImagePath) {
-            $request['image'] = $savedImagePath;
-            $request['user_id'] = 1;
-            $db->insert('articles', array_keys($request), $request);
-        }
-        else $this->redirectBack();
-    }
-    else{
+    if (empty($request['cat_id'])) {
         $this->redirectBack();
+        return;
     }
-}
+    if (!isset($request['image']) || !is_array($request['image'])) {
+        $this->redirectBack();
+        return;
+    }
+    $savedImagePath = $this->saveImage($request['image'], 'article-image');
+    if (!$savedImagePath) {
+        $this->redirectBack();
+        return;
+    }
+    $request['image'] = $savedImagePath;
+    $request['user_id'] = 1;
+    $db->insert('articles', array_keys($request), $request);
+    }
+
 
 
     public function edit($id): void
