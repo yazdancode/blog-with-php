@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/admindashboard/Category.php';
+require_once __DIR__ . '/admindashboard/Menu.php';
 require_once __DIR__ . '/Database/CreateDB.php';
 
 function uri($uriPattern, $className, $methodName, $requestMethod = 'GET')
@@ -56,3 +57,12 @@ uri('articles/store', 'Article','store', 'POST');
 uri('articles/edit/{id}', 'Article','edit');
 uri('articles/update/{id}', 'Article','update', 'POST');
 uri('articles/delete/{id}', 'Article','delete');
+
+
+// روتر menu
+uri('menu', 'Menu','index');
+uri('menu/create', 'Menu','create');
+uri('menu/store', 'Menu','store', 'POST');
+uri('menu/edit/{id}', 'Menu','edit');
+uri('menu/update/{id}', 'Menu','update', 'POST');
+uri('menu/delete/{id}', 'Menu','delete');
