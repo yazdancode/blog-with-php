@@ -30,7 +30,6 @@ class User extends Admin
     {
         $db = new Database();
         $user = $db->select("SELECT * FROM users WHERE id = ?", [$id])[0];
-        extract(['category' => $user]);
         require dirname(__DIR__) . "/template/admin/users/edit.php";
     }
 
