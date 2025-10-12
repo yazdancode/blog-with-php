@@ -68,7 +68,8 @@ uri('menu/edit/{id}', 'Menu','edit');
 uri('menu/update/{id}', 'Menu','update', 'POST');
 uri('menu/delete/{id}', 'Menu','delete');
 
-//
-uri('web-setting', 'WebSetting','index');
-uri('web-setting/set', 'Menu','set');
-uri('web-setting/store', 'Menu','store', 'POST');
+// روتر web-setting
+uri('web-setting', 'WebSetting', 'index');
+uri('web-setting/set', 'WebSetting', 'set');
+uri('web-setting/store', 'WebSetting', 'store', 'POST');
+
