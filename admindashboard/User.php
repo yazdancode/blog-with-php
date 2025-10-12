@@ -48,7 +48,4 @@ class User extends Admin
         $db->delete('users', $id);
         $this->redirectBack();
     }
-
-
-
 }
