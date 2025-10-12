@@ -6,12 +6,10 @@ use Database\Database;
 
 class Auth
 {
-
     public function login():void
     {
         require dirname(__DIR__) . "/template/auth/login.php";
     }
-
     public function check_login($request): void
     {
         if (empty($request['email']) || empty($request['password'])) {
@@ -34,6 +32,10 @@ class Auth
                 $this->redirectBack();
             }
         }
+    }
+    public function register():void
+    {
+        require dirname(__DIR__) . "/template/auth/register.php";
     }
 
     protected function redirect($url): void
