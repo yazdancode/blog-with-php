@@ -6,7 +6,7 @@ use Database\Database;
 
 class Menu extends Admin
 {
-    public function index()
+    public function index():void
     {
         $db = new Database;
         $menus = $db->select("SELECT * FROM menus ORDER BY id DESC");
@@ -15,7 +15,7 @@ class Menu extends Admin
 
 
     }
-    public function show($id)
+    public function show($id): void
     {
         $db = new Database();
         $menu = $db->select("SELECT * FROM `menus` WHERE `id` = ?", [$id]);
@@ -23,7 +23,7 @@ class Menu extends Admin
 
     }
 
-    public function create()
+    public function create(): void
     {
         $db = new Database();
         $menu = $db->select("SELECT * FROM `menus` WHERE `parent_id` IS NULL;");
@@ -39,11 +39,11 @@ class Menu extends Admin
 
     }
 
-    public function edit($id)
+    public function edit($id):void
     {
         $db = new Database();
         $menu = $db->select("SELECT * FROM `menus` WHERE `parent_id` IS NULL;");
-        $menu = $db->select("SELECT * FROM  WHERE id = ?", [$id])[0];
+        $menus = $db->select("SELECT * FROM  WHERE id = ?", [$id])[0];
         extract(['menu' => $menu]);
         require dirname(__DIR__) . "/template/admin/menus/edit.php";
 
