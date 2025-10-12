@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/admindashboard/Category.php';
 require_once __DIR__ . '/admindashboard/Menu.php';
+require_once __DIR__ . '/admindashboard/WebSetting.php';
 require_once __DIR__ . '/Database/CreateDB.php';
 
 function uri($uriPattern, $className, $methodName, $requestMethod = 'GET')
@@ -66,3 +67,8 @@ uri('menu/store', 'Menu','store', 'POST');
 uri('menu/edit/{id}', 'Menu','edit');
 uri('menu/update/{id}', 'Menu','update', 'POST');
 uri('menu/delete/{id}', 'Menu','delete');
+
+//
+uri('web-setting', 'WebSetting','index');
+uri('web-setting/set', 'Menu','set');
+uri('web-setting/store', 'Menu','store', 'POST');
