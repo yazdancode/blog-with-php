@@ -5,6 +5,12 @@ use RuntimeException;
 
 class Admin
 {
+    public function __construct()
+    {
+        $auth = new Auth();
+        $auth->checkAdmin();
+    }
+
     protected function redirect($url): void
     {
         $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';

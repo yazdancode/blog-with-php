@@ -2,6 +2,7 @@
 
 namespace Database;
 
+use InvalidArgumentException;
 use PDO;
 use PDOException;
 
@@ -77,12 +78,18 @@ class Database
             $placeholders = array_map(static fn ($field) => ':' . $field, $fields);
             $sql = "INSERT INTO $tableName (" . implode(',', $fields) . ") VALUES (" . implode(',', $placeholders) . ")";
             $stmt = $this->conn->prepare($sql);
-
             foreach ($rows as $row) {
+                if (array_keys($row) !== range(0, count($row) - 1)) {
+                    $row = array_map(static fn($field) => $row[$field] ?? null, $fields);
+                }
+
+                if (count($placeholders) !== count($row)) {
+                    throw new InvalidArgumentException("Mismatch between fields and row values.");
+                }
+
                 $data = array_combine($placeholders, $row);
                 $stmt->execute($data);
             }
-
             return true;
         } catch (PDOException $e) {
             error_log("Insert query failed: " . $e->getMessage());

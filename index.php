@@ -3,7 +3,7 @@ require_once __DIR__ . '/admindashboard/Category.php';
 require_once __DIR__ . '/admindashboard/Menu.php';
 require_once __DIR__ . '/admindashboard/WebSetting.php';
 require_once __DIR__ . '/admindashboard/User.php';
-//require_once __DIR__ . '/Admindashboard/Auth.php';
+require_once __DIR__ . '/Admindashboard/Auth.php';
 require_once __DIR__ . '/Database/CreateDB.php';
 
 function uri($uriPattern, $className, $methodName, $requestMethod = 'GET')
@@ -81,3 +81,11 @@ uri('user/permission/{id}', 'User','permission');
 uri('user/edit/{id"', 'User','edit');
 uri('user/update/{id}', 'User','update', 'POST');
 uri('user/delete/{id}', 'User','delete');
+
+// router Auth
+uri('login','Auth','login');
+uri('check_login', 'Auth', 'check_login', 'POST');
+uri('register', 'Auth', 'register');
+uri('register/store', 'Auth', 'register_store', 'POST');
+uri('logout', 'Auth', 'logout');
+

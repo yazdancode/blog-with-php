@@ -1,11 +1,17 @@
 <?php
-
 namespace Admindashboard;
 require_once __DIR__ . '/../Database/Database.php';
 use Database\Database;
 
 class Auth
 {
+    public function __construct()
+    {
+        if(session_status() === PHP_SESSION_NONE)
+        {
+            session_start();
+        }
+    }
     public function login(): void
     {
         require dirname(__DIR__) . "/template/auth/login.php";
@@ -33,27 +39,28 @@ class Auth
     {
         require dirname(__DIR__) . "/template/auth/register.php";
     }
-
     public function register_store($request): void
     {
-        if (empty($request['email']) || empty($request['password'])) {
+        if (empty($request['email']) || empty($request['password']) || empty($request['username'])) {
             $this->redirectBack();
-        }
-        elseif (strlen($request['password']) < 8) {
+        } elseif (strlen($request['password']) < 8) {
             $this->redirectBack();
-        }
-        elseif (!filter_var($request['email'], FILTER_VALIDATE_EMAIL)) {
+        } elseif (!filter_var($request['email'], FILTER_VALIDATE_EMAIL)) {
             $this->redirectBack();
-        }
-        else {
+        } else {
             $db = new Database();
             $existingUser = $db->select("SELECT * FROM users WHERE `email` = ?", [$request['email']]);
             if ($existingUser) {
-                $this->redirectBack();
-                return;
+                header("Location: /project/register?error=1");
+                exit;
             }
             $request['password'] = $this->hashPassword($request['password']);
-            $db->insert('users', array_keys($request), $request);
+            $allowedFields = ['email', 'password', 'username'];
+            $filteredRequest = array_intersect_key($request, array_flip($allowedFields));
+
+            $fields = array_keys($filteredRequest);
+            $values = [array_values($filteredRequest)];
+            $db->insert('users', $fields, $values);
             $this->redirect('login');
         }
     }
@@ -106,7 +113,7 @@ class Auth
     protected function redirect($url): void
     {
         $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
-        header("Location: " . $protocol . $_SERVER['HTTP_HOST'] . "/admin-panel/" . $url);
+        header("Location: " . $protocol . $_SERVER['HTTP_HOST'] . "/project/" . $url);
         exit;
     }
 
