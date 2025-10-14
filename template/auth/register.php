@@ -1,10 +1,14 @@
+<?php
+require_once __DIR__ . '/../../helpers/UrlHelper.php';
+use helpers\UrlHelper;
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
-    <link rel="stylesheet" href="../../public/css/auth/register.css">
+    <link rel="stylesheet" href="<?php echo UrlHelper::assetsUrl('css/auth/register.css'); ?>">
 </head>
 <body>
 <div class="register-container">
@@ -113,7 +117,6 @@
         <p>Already have an account? <a href="login.php">Sign in</a></p>
     </div>
 </div>
-
-<script src="../../public/js/auth/register.js"></script>
+<script src="<?php echo UrlHelper::assetsUrl("js/auth/register.js")?>"></script>
 </body>
 </html>

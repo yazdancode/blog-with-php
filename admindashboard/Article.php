@@ -19,7 +19,7 @@ class Article extends Admin
     {
         $db = new Database();
         $articles = $db->select('SELECT * FROM `articles` WHERE `id` = ?', [$id]);
-        if (empty($articles)) {
+        if ($articles === null) {
             $this->redirectBack();
             return;
         }
@@ -60,7 +60,7 @@ class Article extends Admin
     {
         $db = new Database();
         $articles = $db->select('SELECT * FROM `articles` WHERE `id` = ?', [$id]);
-        if (empty($articles)) {
+        if ($articles === null) {
             $this->redirectBack();
             return;
         }
@@ -80,7 +80,7 @@ class Article extends Admin
         }
 
         $articles = $db->select('SELECT * FROM `articles` WHERE `id` = ?', [$id]);
-        if (empty($articles)) {
+        if ($articles === null) {
             $this->redirectBack();
             return;
         }
@@ -108,7 +108,7 @@ class Article extends Admin
     {
         $db = new Database();
         $articles = $db->select('SELECT * FROM `articles` WHERE `id` = ?', [$id]);
-        if (!empty($articles) && !empty($articles[0]['image'])) {
+        if ($articles !== null && !empty($articles[0]['image'])) {
             $this->removeImage($articles[0]['image']);
         }
 

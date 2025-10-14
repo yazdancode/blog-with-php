@@ -50,6 +50,10 @@ class Auth
         } else {
             $db = new Database();
             $existingUser = $db->select("SELECT * FROM users WHERE `email` = ?", [$request['email']]);
+            if($existingUser !==null)
+            {
+                $this->redirectBack();
+            }
             if ($existingUser) {
                 header("Location: /project/register?error=1");
                 exit;

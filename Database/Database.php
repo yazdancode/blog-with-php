@@ -5,6 +5,7 @@ namespace Database;
 use InvalidArgumentException;
 use PDO;
 use PDOException;
+use PDOStatement;
 
 class Database
 {
@@ -52,23 +53,25 @@ class Database
         }
     }
 
-    public function select(string $sql, ?array $values = null): ?array
+    public function select(string $sql, ?array $values = null): ?PDOStatement
     {
         $this->ensureConnection();
 
         try {
             if ($values === null) {
-                $stmt = $this->conn->query($sql);
-            } else {
-                $stmt = $this->conn->prepare($sql);
-                $stmt->execute($values);
+                return $this->conn->query($sql);
             }
-            return $stmt->fetchAll();
+
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute($values);
+            return $stmt;
         } catch (PDOException $e) {
             error_log("Select query failed: " . $e->getMessage());
             return null;
         }
     }
+
+
 
     public function insert(string $tableName, array $fields, array $rows): bool
     {

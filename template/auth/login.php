@@ -1,10 +1,14 @@
+<?php
+require_once __DIR__ . '/../../helpers/UrlHelper.php';
+use helpers\UrlHelper;
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="../../public/css/auth/login.css">
+    <link rel="stylesheet" href="<?php echo UrlHelper::assetsUrl('css/auth/login.css'); ?>">
 </head>
 <body>
 <div class="login-container">
@@ -72,6 +76,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 
 <!-- Conditional Error Alert -->
-<script src="../../public/js/auth/login.js"></script>
+<script src="<?php echo UrlHelper::assetsUrl("js/auth/login.js")?>"></script>
 </body>
 </html>
