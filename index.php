@@ -4,6 +4,7 @@ require_once __DIR__ . '/admindashboard/Menu.php';
 require_once __DIR__ . '/admindashboard/WebSetting.php';
 require_once __DIR__ . '/admindashboard/User.php';
 require_once __DIR__ . '/Admindashboard/Auth.php';
+require_once __DIR__ . '/Admindashboard/Home.php';
 require_once __DIR__ . '/Database/CreateDB.php';
 
 function uri($uriPattern, $className, $methodName, $requestMethod = 'GET')
@@ -89,3 +90,7 @@ uri('register', 'Auth', 'register');
 uri('register/store', 'Auth', 'register_store', 'POST');
 uri('logout', 'Auth', 'logout');
 
+uri('home', 'Home', 'index');
+uri('show-article/{id}', 'Home', 'show');
+uri('show-category/{id}', 'Home', 'category');
+uri('comment-store/{id}', 'Home', 'comment_store', 'POST');
