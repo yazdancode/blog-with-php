@@ -50,7 +50,7 @@ class Article extends Admin
         }
 
         $request['image'] = $savedImagePath;
-        $request['user_id'] = 1;
+        $request['user_id'] =$_SESSION['user'];
 
         $db->insert('articles', array_keys($request), $request);
         $this->redirect('article');
@@ -99,7 +99,7 @@ class Article extends Admin
             $request['image'] = $article['image'];
         }
 
-        $request['user_id'] = 1;
+        $request['user_id'] = $_SESSION['user'];
         $db->update('articles', array_keys($request), $request, $id);
         $this->redirect('article');
     }
