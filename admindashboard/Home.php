@@ -2,24 +2,20 @@
 namespace Admindashboard;
 require_once __DIR__ . '/../Database/Database.php';
 use Database\Database;
+use Exception;
 
 class Home
 {
     public function index(): void
     {
         $db = new Database();
-
         $articlesStmt = $db->select("SELECT articles.*, (SELECT COUNT(*) FROM comments WHERE comments.article_id = articles.id) AS comments_count,(SELECT username FROM users WHERE users.id = articles.user_id) AS username FROM articles ORDER BY created_at DESC LIMIT 6");
         $articles = $articlesStmt ? $articlesStmt->fetchAll() : [];
-
         $popularStmt = $db->select("SELECT articles.*, (SELECT COUNT(*) FROM comments WHERE comments.article_id = articles.id) AS comments_count,(SELECT username FROM users WHERE users.id = articles.user_id) AS username FROM articles ORDER BY view DESC LIMIT 4");
         $popularArticles = $popularStmt ? $popularStmt->fetchAll() : [];
-
         $sidebarPopularArticles = $popularArticles;
-
         $categoriesStmt = $db->select("SELECT * FROM categories ORDER BY id DESC;");
         $categories = $categoriesStmt ? $categoriesStmt->fetchAll() : [];
-
         $menusStmt = $db->select("SELECT menus.*, (SELECT COUNT(*) FROM menus AS submenus WHERE submenus.parent_id = menus.id) AS submenu_count FROM menus WHERE parent_id IS NULL");
         $menus = $menusStmt ? $menusStmt->fetchAll() : [];
         $submenusStmt = $db->select('SELECT * FROM menus WHERE parent_id IS NOT NULL;');
@@ -69,10 +65,8 @@ class Home
     public function category($id): void
     {
         $db = new Database();
-
         $categoryStmt = $db->select('SELECT * FROM categories WHERE id = ? ORDER BY id DESC;', [$id]);
         $category = $categoryStmt ? $categoryStmt->fetchAll() : [];
-
         $articlesStmt = $db->select('
         SELECT articles.*, 
                (SELECT COUNT(*) FROM comments WHERE comments.article_id = articles.id) AS comments_count,
@@ -80,7 +74,6 @@ class Home
         FROM articles 
         WHERE articles.cat_id = ?', [$id]);
         $articles = $articlesStmt ? $articlesStmt->fetchAll() : [];
-
         $popularStmt = $db->select('
         SELECT articles.*, 
                (SELECT COUNT(*) FROM comments WHERE comments.article_id = articles.id) AS comments_count 
@@ -88,22 +81,17 @@ class Home
         ORDER BY comments_count DESC 
         LIMIT 5;');
         $popularArticles = $popularStmt ? $popularStmt->fetchAll() : [];
-
         $sidebarPopularArticles = $popularArticles;
-
         $categoriesStmt = $db->select('SELECT * FROM categories ORDER BY id DESC;');
         $categories = $categoriesStmt ? $categoriesStmt->fetchAll() : [];
-
         $menusStmt = $db->select('
         SELECT *, 
                (SELECT COUNT(*) FROM menus AS submenus WHERE submenus.parent_id = menus.id) AS submenu_count 
         FROM menus 
         WHERE parent_id IS NULL;');
         $menus = $menusStmt ? $menusStmt->fetchAll() : [];
-
         $submenusStmt = $db->select('SELECT * FROM menus WHERE parent_id IS NOT NULL;');
         $submenus = $submenusStmt ? $submenusStmt->fetchAll() : [];
-
         $templatePath = dirname(__DIR__) . '/template/app/show-category.php';
         if (file_exists($templatePath)) {
             require_once($templatePath);
@@ -111,29 +99,28 @@ class Home
             echo "Template not found.";
         }
     }
-
-
-
-    public function comment_store($request):void
+    public function comment_store($request): void
     {
         session_start();
-        if(isset($_SESSION['user'])){
-            if($_SESSION['user'] != null)
-            {
+        if (!empty($_SESSION['user'])) {
+            if (empty($request['article']) || empty($request['comment'])) {
+                $this->redirectBack();
+                return;
+            }
+
+            $userId = $_SESSION['user'];
+            $articleId = $request['article'];
+            $comment = htmlspecialchars($request['comment'], ENT_QUOTES, 'UTF-8');
+
+            try {
                 $db = new Database();
-                $db->insert('comments', ['user_id', 'article_id','comment'], [$_SESSION['user'], $request['article'], $request['comment']]);
-                $this->redirectBack();
-            }
-            else
-            {
-                $this->redirectBack();
+                $db->insert('comments', ['user_id', 'article_id', 'comment'], [$userId, $articleId, $comment]);
+            } catch (Exception) {
             }
         }
-        else
-        {
-            $this->redirectBack();
-        }
+        $this->redirectBack();
     }
+
 
     protected function redirectBack():void
     {
