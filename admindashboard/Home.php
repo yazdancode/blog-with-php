@@ -66,15 +66,73 @@ class Home
         require_once(realpath(__DIR__) . "/../template/app/show-article.php");
     }
 
-
-    public function category($id):void
+    public function category($id): void
     {
-        
+        $db = new Database();
+
+        $categoryStmt = $db->select('SELECT * FROM categories WHERE id = ? ORDER BY id DESC;', [$id]);
+        $category = $categoryStmt ? $categoryStmt->fetchAll() : [];
+
+        $articlesStmt = $db->select('
+        SELECT articles.*, 
+               (SELECT COUNT(*) FROM comments WHERE comments.article_id = articles.id) AS comments_count,
+               (SELECT username FROM users WHERE users.id = articles.user_id) AS username 
+        FROM articles 
+        WHERE articles.cat_id = ?', [$id]);
+        $articles = $articlesStmt ? $articlesStmt->fetchAll() : [];
+
+        $popularStmt = $db->select('
+        SELECT articles.*, 
+               (SELECT COUNT(*) FROM comments WHERE comments.article_id = articles.id) AS comments_count 
+        FROM articles 
+        ORDER BY comments_count DESC 
+        LIMIT 5;');
+        $popularArticles = $popularStmt ? $popularStmt->fetchAll() : [];
+
+        $sidebarPopularArticles = $popularArticles;
+
+        $categoriesStmt = $db->select('SELECT * FROM categories ORDER BY id DESC;');
+        $categories = $categoriesStmt ? $categoriesStmt->fetchAll() : [];
+
+        $menusStmt = $db->select('
+        SELECT *, 
+               (SELECT COUNT(*) FROM menus AS submenus WHERE submenus.parent_id = menus.id) AS submenu_count 
+        FROM menus 
+        WHERE parent_id IS NULL;');
+        $menus = $menusStmt ? $menusStmt->fetchAll() : [];
+
+        $submenusStmt = $db->select('SELECT * FROM menus WHERE parent_id IS NOT NULL;');
+        $submenus = $submenusStmt ? $submenusStmt->fetchAll() : [];
+
+        $templatePath = dirname(__DIR__) . '/template/app/show-category.php';
+        if (file_exists($templatePath)) {
+            require_once($templatePath);
+        } else {
+            echo "Template not found.";
+        }
     }
+
+
 
     public function comment_store($request):void
     {
-
+        session_start();
+        if(isset($_SESSION['user'])){
+            if($_SESSION['user'] != null)
+            {
+                $db = new Database();
+                $db->insert('comments', ['user_id', 'article_id','comment'], [$_SESSION['user'], $request['article'], $request['comment']]);
+                $this->redirectBack();
+            }
+            else
+            {
+                $this->redirectBack();
+            }
+        }
+        else
+        {
+            $this->redirectBack();
+        }
     }
 
     protected function redirectBack():void
