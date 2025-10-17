@@ -92,6 +92,7 @@ class Home
         $menus = $menusStmt ? $menusStmt->fetchAll() : [];
         $submenusStmt = $db->select('SELECT * FROM menus WHERE parent_id IS NOT NULL;');
         $submenus = $submenusStmt ? $submenusStmt->fetchAll() : [];
+
         $templatePath = dirname(__DIR__) . '/template/app/show-category.php';
         if (file_exists($templatePath)) {
             require_once($templatePath);
