@@ -49,7 +49,6 @@ class Menu extends Admin
         $this->redirectBack();
         return;
     }
-
     require dirname(__DIR__) . "/template/admin/menus/edit.php";
     }
 
