@@ -98,5 +98,5 @@ uri('comment-store/{id}', 'Home', 'comment_store', 'POST');
 
 
 uri('comment', 'Comment', 'index');
-uri('comment/show{id}', 'Comment', 'show');
-uri('comment/approved{id}', 'Comment', 'approved');
+uri('comment/show/{id}', 'Comment', 'show');
+uri('comment/approved/{id}', 'Comment', 'approved');
