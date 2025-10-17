@@ -39,14 +39,18 @@ class Menu extends Admin
 
     }
 
-    public function edit($id):void
+    public function edit($id): void
     {
-        $db = new Database();
-        $menu = $db->select("SELECT * FROM `menus` WHERE `parent_id` IS NULL;");
-        $menus = $db->select("SELECT * FROM  WHERE id = ?", [$id])[0];
-        extract(['menu' => $menu]);
-        require dirname(__DIR__) . "/template/admin/menus/edit.php";
+    $db = new Database();
+    $topMenus = $db->select("SELECT * FROM `menus` WHERE `parent_id` IS NULL;");
+    $menu = $db->select("SELECT * FROM `menus` WHERE `id` = ?", [$id])->fetch();
 
+    if (!$menu) {
+        $this->redirectBack();
+        return;
+    }
+
+    require dirname(__DIR__) . "/template/admin/menus/edit.php";
     }
 
     public function update($request, $id): void
