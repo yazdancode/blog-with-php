@@ -5,6 +5,8 @@ require_once __DIR__ . '/Admin.php';
 require_once __DIR__ . '/../Database/Database.php';
 
 use Database\Database;
+use JetBrains\PhpStorm\NoReturn;
+
 class Comment extends Admin
 {
     public function index(): void
@@ -24,10 +26,11 @@ class Comment extends Admin
     {
         $db = new Database();
         $comment = $db->select("SELECT * FROM comments WHERE id = ?", [$id])->fetch();
-        require_once dirname(__FILE__) . "/template/admin/comments/show.php";
+        require_once dirname(__DIR__) . "/template/admin/comments/show.php";
     }
 
-    public function approved($id)  
+    #[NoReturn]
+    public function approved($id): void
     {
     $db = new Database();
     $comment = $db->select("SELECT * FROM comments WHERE id = ?", [$id])->fetch();

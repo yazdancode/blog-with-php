@@ -1,6 +1,7 @@
 <?php
 namespace AdminDashboard;
 
+use JetBrains\PhpStorm\NoReturn;
 use RuntimeException;
 
 class Admin
@@ -11,6 +12,7 @@ class Admin
         $auth->checkAdmin();
     }
 
+    #[NoReturn]
     protected function redirect($url): void
     {
         $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
@@ -18,6 +20,7 @@ class Admin
         exit;
     }
 
+    #[NoReturn]
     protected function redirectBack(): void
     {
         if (!empty($_SERVER['HTTP_REFERER'])) {
@@ -28,7 +31,7 @@ class Admin
         $this->redirect('dashboard');
     }
 
-    protected function saveImage($image, $imagePath, $imagename = null)
+    protected function saveImage($image, $imagePath, $imagename = null): false|string
     {
         // بررسی وجود کلیدهای لازم
         if (!isset($image['tmp_name'], $image['name'], $image['type'])) {
@@ -58,15 +61,15 @@ class Admin
 
     protected function removeImage($path): bool
     {
-    if (empty($path)) {
-        return false;
-    }
-    $fullPath = $_SERVER['DOCUMENT_ROOT'] . '/' . ltrim($path, '/');
-    if (file_exists($fullPath)) {
-        return unlink($fullPath);
-    }
+        if (empty($path)) {
+            return false;
+        }
+        $fullPath = $_SERVER['DOCUMENT_ROOT'] . '/' . ltrim($path, '/');
+        if (file_exists($fullPath)) {
+            return unlink($fullPath);
+        }
 
-    return false;
+        return false;
     }
 
 }
